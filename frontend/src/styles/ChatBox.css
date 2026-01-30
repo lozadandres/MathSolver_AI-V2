@@ -1,5 +1,6 @@
-h3, p {
-    color: #333;
+h3,
+p {
+  color: #333;
 }
 /* Estilos para el contenedor principal del chat */
 .chat-container {
@@ -93,8 +94,14 @@ h3, p {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .message.user {
@@ -125,16 +132,24 @@ h3, p {
   border-bottom-left-radius: 5px;
 }
 
-.user-icon, .bot-icon {
+.user-icon,
+.bot-icon {
   margin-right: 8px;
   font-size: 1.2rem;
 }
 
 .message-text {
   word-break: break-word;
-  line-height: 1.4;
-  white-space: pre-wrap;
+  line-height: 1.6;
   padding: 0 8px;
+}
+
+.message-text p {
+  margin: 0 0 10px 0;
+}
+
+.message-text p:last-child {
+  margin-bottom: 0;
 }
 
 /* Estilos para el indicador de carga */
@@ -162,8 +177,49 @@ h3, p {
 }
 
 @keyframes bounce {
-  0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1); }
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Estilos para el selector de modo */
+.mode-selector {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #eee;
+}
+
+.mode-selector button {
+  padding: 8px 15px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background-color: white;
+  color: #666;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  max-width: 120px;
+}
+
+.mode-selector button:hover {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+}
+
+.mode-selector button.active {
+  background-color: #4a56e2;
+  color: white;
+  border-color: #4a56e2;
+  box-shadow: 0 2px 4px rgba(74, 86, 226, 0.3);
 }
 
 /* Estilos para el contenedor de entrada */
@@ -215,7 +271,7 @@ h3, p {
     border-radius: 0;
     max-width: 100%;
   }
-  
+
   .message-content {
     max-width: 90%;
   }

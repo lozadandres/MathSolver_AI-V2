@@ -1,9 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 import '../styles/ChatBox.css';
 
 const ChatBox = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
+  const [mode, setMode] = useState('detallado');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
@@ -34,7 +39,7 @@ const ChatBox = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ message: input, mode: mode }),
       });
 
       if (!response.ok) {
@@ -57,13 +62,7 @@ const ChatBox = () => {
     }
   };
 
-  // Función para limpiar el texto de etiquetas HTML y markdown
-  const cleanTextContent = (text) => {
-    // Remover etiquetas HTML como <sub> y <sup>
-    const withoutHtmlTags = text.replace(/<[^>]*>/g, '');
-    // Remover asteriscos
-    return withoutHtmlTags.replace(/\*\*/g, '');
-  };
+
 
   return (
     <div className="chat-container">
@@ -115,7 +114,12 @@ const ChatBox = () => {
                   <span className="bot-icon">🤖</span>
                 )}
                 <div className="message-text">
-                  {cleanTextContent(msg.content)}
+                  <ReactMarkdown 
+                    remarkPlugins={[remarkMath]} 
+                    rehypePlugins={[rehypeKatex]}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
                 </div>
               </div>
             </div>
@@ -138,6 +142,30 @@ const ChatBox = () => {
         <div ref={messagesEndRef} />
       </div>
       
+      <div className="mode-selector">
+        <button 
+          type="button" 
+          className={mode === 'rápido' ? 'active' : ''} 
+          onClick={() => setMode('rápido')}
+        >
+          ⚡ Rápido
+        </button>
+        <button 
+          type="button" 
+          className={mode === 'detallado' ? 'active' : ''} 
+          onClick={() => setMode('detallado')}
+        >
+          📚 Detallado
+        </button>
+        <button 
+          type="button" 
+          className={mode === 'quiz' ? 'active' : ''} 
+          onClick={() => setMode('quiz')}
+        >
+          🧠 Quiz
+        </button>
+      </div>
+
       <form className="input-container" onSubmit={sendMessage}>
         <input
           type="text"

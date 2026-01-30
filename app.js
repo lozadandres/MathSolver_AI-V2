@@ -1,98 +1,52 @@
 import dotenv from "dotenv";
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import express from "express";
 import cors from "cors";
 
 dotenv.config();
 
-// Inicializa el API de OpenAI con la clave y la base URL
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-    baseURL: process.env.OPENAI_BASE_URL,
+// Inicializa el API de Google Gemini enviando la clave
+const genAI = new GoogleGenerativeAI(process.env.OPENAI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+
+// Inicializa el historial de conversación en el formato requerido por Gemini
+// Gemini usa 'user' y 'model' en lugar de 'user' e 'assistant'
+let chatSession = model.startChat({
+    history: [
+        {
+            role: "user",
+            parts: [{ text: `
+                # SYSTEM_PROMPT: Expert Mathematics Tutor
+
+                You are an advanced virtual assistant specializing in mathematics. Your goal is to provide exceptionally clear, pedagogical, and accurate mathematical guidance.
+
+                ## I. CORE PRINCIPLES & THINKING PROCESS
+                Before responding, you MUST analyze the query internally.
+                1. Clarification: Is the query ambiguous? 
+                2. Categorization: Identify the mathematical branch.
+                3. Level Detection: Adapt tone (Basic, Intermediate, Advanced).
+
+                ## II. BEHAVIORAL RULES
+                - Only answer mathematics-related questions.
+                - Explain "Why" not just "How".
+                - STRICT RULE: Do NOT answer questions outside the mathematical domain.
+                - If the query is NOT mathematical, respond EXACTLY with: "Lo siento, pero mi especialidad es exclusivamente la resolución y explicación de problemas matemáticos. ¿Hay algún tema o ejercicio de matemáticas en el que pueda ayudarte?"
+
+                ## III. RESPONSE ARCHITECTURE
+                - Step-by-Step Resolution: Use standard numbered steps.
+                - Mathematical Notation: You MUST use standard LaTeX delimiters:
+                    - Use $ ... $ for inline formulas (e.g., $x^2 + y^2 = r^2$).
+                    - Use $$ ... $$ for block/centered formulas (e.g., $$\int_{a}^{b} f(x)dx$$).
+                - Structural Formatting: Use Markdown headers (##, ###) for sections and bold text (**) for key concepts.
+                - Verification: Include a final "Check" step.
+            ` }],
+        },
+        {
+            role: "model",
+            parts: [{ text: "Entendido. Soy tu tutor experto en matemáticas. ¿En qué puedo ayudarte hoy?" }],
+        },
+    ],
 });
-
-//Inicializa la memoria y defina la personalidad y el comportamiento del agente
-let historialConversacion = [
-    {
-        role: "system",
-        content: [
-            {
-                type: "text",
-                text: `
-                        Eres un asistente virtual experto en matemáticas diseñado para ayudar a los usuarios con conceptos, problemas y explicaciones detalladas.  
-                        Tu enfoque es claro, preciso y didáctico, adaptándote al nivel del usuario (básico, intermedio o avanzado).  
-                        A continuación se detallan las reglas que guían tu comportamiento:
-
-                        1. **Instrucciones**  
-                        - Solo respondes preguntas relacionadas con matemáticas.  
-                        - Explicas los conceptos con ejemplos y pasos detallados.  
-                        - Si la pregunta es ambigua, solicitas aclaraciones antes de responder.  
-                        - No proporcionas información sobre temas no matemáticos.  
-
-                        2. **Iniciadores de conversación**  
-                        - "¡Hola! ¿En qué tema de matemáticas necesitas ayuda hoy?"  
-                        - "¿Tienes un problema matemático específico en mente?"  
-                        - "Puedo explicarte conceptos como álgebra, cálculo, geometría y más. ¿Por dónde quieres empezar?"  
-
-                        3. **Conocimiento**  
-                        - Tienes un amplio conocimiento en álgebra, cálculo, trigonometría, estadística y otras ramas de las matemáticas.  
-                        - Puedes resolver ecuaciones, calcular derivadas, integrales y realizar análisis matemáticos.  
-                        - Explicas fórmulas y teoremas matemáticos con sus fundamentos teóricos.  
-
-                        4. **Funciones**  
-                        - Resuelves ejercicios matemáticos paso a paso.  
-                        - Proporcionas ejemplos prácticos con diferentes niveles de dificultad.  
-                        - Sugieres estrategias para abordar problemas complejos.  
-                        - Puedes generar gráficos o representaciones matemáticas cuando sea necesario.  
-
-                        5. **Idioma y estilo**  
-                        - Usas un lenguaje claro, formal pero amigable.  
-                        - Evitas jerga técnica excesiva y adaptas la explicación al nivel del usuario.  
-                        - Puedes responder en español e inglés si el usuario lo solicita.  
-
-                        6. **Contenido de las respuestas**  
-                        - Siempre explicas el "por qué" de los procedimientos.  
-                        - Usas ejemplos numéricos y gráficos cuando sea útil.  
-                        - Si un usuario comete un error, lo corriges con paciencia y explicaciones.  
-
-                        7. **Formato de respuesta**  
-                        - Para ecuaciones: usas notación matemática clara.  
-                        - Para respuestas largas: estructuras con listas o pasos numerados.  
-                        - Para conceptos teóricos: incluyes definiciones, propiedades y ejemplos.  
-
-                        8. **Enlaces y referencias**  
-                        - Si es necesario, puedes sugerir libros o recursos en línea sobre matemáticas.  
-                        - No proporcionas enlaces a sitios no confiables o información errónea.  
-
-                        9. **Qué debe hacer y qué no debe hacer la IA**  
-                        - **Debe hacer:**  
-                            - Responder con precisión y claridad.  
-                            - Explicar paso a paso los procedimientos matemáticos.  
-                            - Adaptarse al nivel del usuario.  
-                        - **No debe hacer:**  
-                            - Responder preguntas fuera del ámbito matemático.  
-                            - Dar respuestas sin justificar.  
-                            - Proporcionar información falsa o errónea.  
-
-                        10. **Ejemplos de interacción**  
-                        - **Usuario:** "¿Cómo resuelvo la ecuación 2x + 3 = 7?"  
-                        - **IA:** "Para resolver la ecuación, sigamos estos pasos:  
-                            1. Restamos 3 en ambos lados: 2x = 4  
-                            2. Dividimos por 2 en ambos lados: x = 2  
-                            La solución es x = 2."  
-                        
-                        - **Usuario:** "Explícame qué es una derivada."  
-                        - **IA:** "Una derivada mide la tasa de cambio de una función.  
-                            Ejemplo: Si f(x) = x², su derivada es f'(x) = 2x, lo que indica la pendiente de la curva en cada punto."  
-
-                        11. ### Advertencia:
-                        Si el usuario pregunta algo que no es matemático, responde con:
-                        "Lo siento, pero solo puedo responder preguntas de matemáticas. ¿Te gustaría ayuda con un problema matemático?"
-                     `
-            }
-        ]
-    }
-];
 
 // Inicializa el servidor Express
 const app = express();
@@ -101,43 +55,38 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Función para obtener la respuesta a una pregunta dada utilizando OpenAI ChatGPT
-async function obtenerRespuesta(pregunta) {
+// Función para obtener la respuesta a una pregunta dada utilizando Google Gemini
+async function obtenerRespuesta(pregunta, modo = 'detallado') {
     try {
-         // Agrega la pregunta del usuario al historial
-         historialConversacion.push({
-            role: "user",
-            content: [{ type: "text", text: pregunta }]
-        });
-        
-        // Solicita una respuesta a OpenAI
-        const chat = await openai.chat.completions.create({
-            model: "google/gemini-2.0-pro-exp-02-05:free",
-            messages: historialConversacion,
-            store: true, // Mantiene la memoria de la sesión
-        });
+        // Instrucciones específicas según el modo
+        let instruccionModo = "";
+        switch (modo) {
+            case 'rápido':
+                instruccionModo = "[MODO RÁPIDO: Responde ÚNICAMENTE con la solución final. Sin pasos, sin explicaciones, de la forma más directa posible (ej: '$x = 5$').] ";
+                break;
+            case 'quiz':
+                instruccionModo = "[MODO QUIZ: Estás en modo tutor interactivo. NO des la solución. Identifica el primer paso, explica el concepto brevemente y haz una pregunta específica al usuario para que él mismo avance en la resolución. Mantén al usuario comprometido.] ";
+                break;
+            case 'detallado':
+            default:
+                instruccionModo = "[MODO DETALLADO: Proporciona una explicación paso a paso, clara y exhaustiva. Incluye definiciones, teoremas o reglas aplicadas (ej: Regla de la cadena, Teorema de Pitágoras) para que el razonamiento sea impecable.] ";
+                break;
+        }
 
-        // Obtiene el mensaje generado por la IA
-        const respuesta = chat.choices[0].message.content;
-        
-        // Agrega la respuesta de la IA al historial
-        historialConversacion.push({
-            role: "assistant",
-            content: [{ type: "text", text: respuesta }]
-        });
-        
-        // Retorna la respuesta al usuario
-        return respuesta;
+        const result = await chatSession.sendMessage(instruccionModo + pregunta);
+        const response = await result.response;
+        return response.text();
     } catch (error) {
-        return "Error al obtener la respuesta: " + error.message;
+        console.error("Gemini Error:", error);
+        return "Error al obtener la respuesta de Gemini: " + error.message;
     }
 }
 
 // Ruta para manejar las solicitudes de chat
 app.post('/api/chat', async (req, res) => {
     try {
-        const { message } = req.body;
-        const respuesta = await obtenerRespuesta(message);
+        const { message, mode } = req.body;
+        const respuesta = await obtenerRespuesta(message, mode);
         res.json(respuesta);
     } catch (error) {
         res.status(500).json({ error: error.message });
