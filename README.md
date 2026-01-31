@@ -2,8 +2,16 @@
 
 MathSolver AI no es solo un chat; es una herramienta diseñada para transformar cómo interactúo con las matemáticas. Desde resolver una derivada compleja hasta guiarme paso a paso como un tutor, este proyecto nació de la necesidad de tener precisión técnica y claridad pedagógica en un solo lugar.
 
-![Inicio de la aplicación](./frontend/public/inicio.png)
-![Respuesta detallada con fórmulas](./frontend/public/respuesta_detallada.png)
+## ✨ Nueva Interfaz Moderna (v2)
+
+### Vista de Inicio
+![Vista de Inicio](./frontend/public/vistainicio.png)
+
+### Respuesta Detallada
+![Vista Detallada](./frontend/public/Vistadetallada.png)
+
+### Estado de Carga
+![Vista de Carga](./frontend/public/vistacarga.png)
 
 ---
 
