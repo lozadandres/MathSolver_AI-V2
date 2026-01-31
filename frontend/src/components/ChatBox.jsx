@@ -65,119 +65,130 @@ const ChatBox = () => {
 
 
   return (
-    <div className="chat-container">
-      <div className="chat-header">
-        <h2>MathSolver AI</h2>
-        <p style={{color:'white'}}>Pregúntame cualquier duda sobre matemáticas</p>
-      </div>
-      
-      <div className="messages-container">
-        {messages.length === 0 ? (
-          <div className="welcome-message">
-            <h3>¡Bienvenido al Asistente Matemático!</h3>
-            <p>MathSolver AI, tu nuevo aliado en el mundo de las matemáticas, utiliza inteligencia artificial para brindarte soluciones precisas y detalladas a tus problemas matemáticos. Con MathSolver AI, podrás:</p>
-            <ul>
-              <li>
-                <a href="#" onClick={(e) => {
-                  e.preventDefault();
-                  setInput('¿Cómo resolver ecuaciones y problemas matemáticos?');
-                }}>Resolver ecuaciones y problemas matemáticos</a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => {
-                  e.preventDefault();
-                  setInput('¿Puedes explicarme conceptos de álgebra, cálculo y geometría?');
-                }}>Explicar conceptos de álgebra, cálculo, geometría y más</a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => {
-                  e.preventDefault();
-                  setInput('¿Me puedes dar un ejemplo paso a paso?');
-                }}>Proporcionar ejemplos paso a paso</a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => {
-                  e.preventDefault();
-                  setInput('¿Puedes explicarme teoremas y fórmulas matemáticas?');
-                }}>Responder preguntas sobre teoremas y fórmulas</a>
-              </li>
-            </ul>
-            <p>¿En qué puedo ayudarte hoy?</p>
+    <div className="chat-layout">
+      <aside className="chat-sidebar">
+        <div className="sidebar-header">
+          <h2>MathSolver AI</h2>
+        </div>
+        <div className="sidebar-content">
+          <div className="history-section">
+            <span className="section-title">NUEVO CHAT</span>
+            <button className="new-chat-btn" onClick={() => setMessages([])}>
+              <span>+</span> Nuevo Problema
+            </button>
           </div>
-        ) : (
-          messages.map((msg, index) => (
-            <div key={index} className={`message ${msg.type}`}>
-              <div className="message-content">
-                {msg.type === 'user' ? (
-                  <span className="user-icon">👤</span>
-                ) : (
-                  <span className="bot-icon">🤖</span>
-                )}
-                <div className="message-text">
-                  <ReactMarkdown 
-                    remarkPlugins={[remarkMath]} 
-                    rehypePlugins={[rehypeKatex]}
-                  >
-                    {msg.content}
-                  </ReactMarkdown>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-        {isLoading && (
-          <div className="message bot">
-            <div className="message-content">
-              <span className="bot-icon">🤖</span>
-              <div className="message-text loading">
-                <div className="typing-indicator">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
+          <div className="mode-section">
+            <span className="section-title">MODO DE RESPUESTA</span>
+            <div className="mode-options">
+              <button 
+                type="button" 
+                className={mode === 'rápido' ? 'active' : ''} 
+                onClick={() => setMode('rápido')}
+              >
+                ⚡ Rápido
+              </button>
+              <button 
+                type="button" 
+                className={mode === 'detallado' ? 'active' : ''} 
+                onClick={() => setMode('detallado')}
+              >
+                📚 Detallado
+              </button>
+              <button 
+                type="button" 
+                className={mode === 'quiz' ? 'active' : ''} 
+                onClick={() => setMode('quiz')}
+              >
+                🧠 Quiz
+              </button>
             </div>
           </div>
-        )}
-        <div ref={messagesEndRef} />
-      </div>
-      
-      <div className="mode-selector">
-        <button 
-          type="button" 
-          className={mode === 'rápido' ? 'active' : ''} 
-          onClick={() => setMode('rápido')}
-        >
-          ⚡ Rápido
-        </button>
-        <button 
-          type="button" 
-          className={mode === 'detallado' ? 'active' : ''} 
-          onClick={() => setMode('detallado')}
-        >
-          📚 Detallado
-        </button>
-        <button 
-          type="button" 
-          className={mode === 'quiz' ? 'active' : ''} 
-          onClick={() => setMode('quiz')}
-        >
-          🧠 Quiz
-        </button>
-      </div>
+        </div>
+        <div className="sidebar-footer">
+          <div className="user-profile">
+            <span className="user-avatar">👤</span>
+            <span className="user-name">Usuario</span>
+          </div>
+        </div>
+      </aside>
 
-      <form className="input-container" onSubmit={sendMessage}>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Haz una pregunta de matemáticas..."
-          disabled={isLoading}
-        />
-        <button type="submit" disabled={isLoading || input.trim() === ''}>
-          {isLoading ? 'Enviando...' : 'Enviar'}
-        </button>
-      </form>
+      <main className="chat-main">
+        <div className="chat-header-mobile">
+          <h2>MathSolver AI</h2>
+        </div>
+        
+        <div className="messages-container">
+          {messages.length === 0 ? (
+            <div className="welcome-screen">
+              <div className="welcome-card">
+                <h1>¿En qué puedo ayudarte hoy?</h1>
+                <p>MathSolver AI utiliza inteligencia artificial para brindarte soluciones precisas y detalladas.</p>
+                <div className="suggestion-grid">
+                  <button onClick={() => setInput('¿Cómo resolver ecuaciones y problemas matemáticos?')}>
+                    Resolver ecuaciones y problemas
+                  </button>
+                  <button onClick={() => setInput('¿Puedes explicarme conceptos de álgebra, cálculo y geometría?')}>
+                    Explicar conceptos matemáticos
+                  </button>
+                  <button onClick={() => setInput('¿Me puedes dar un ejemplo paso a paso?')}>
+                    Ejemplos paso a paso
+                  </button>
+                  <button onClick={() => setInput('¿Puedes explicarme teoremas y fórmulas matemáticas?')}>
+                    Teoremas y fórmulas
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="messages-list">
+              {messages.map((msg, index) => (
+                <div key={index} className={`message-wrapper ${msg.type}`}>
+                  <div className="message-icon">
+                    {msg.type === 'user' ? '👤' : '🤖'}
+                  </div>
+                  <div className="message-bubble">
+                    <ReactMarkdown 
+                      remarkPlugins={[remarkMath]} 
+                      rehypePlugins={[rehypeKatex]}
+                    >
+                      {msg.content}
+                    </ReactMarkdown>
+                  </div>
+                </div>
+              ))}
+              {isLoading && (
+                <div className="message-wrapper bot">
+                  <div className="message-icon">🤖</div>
+                  <div className="message-bubble loading">
+                    <div className="typing-indicator">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          )}
+        </div>
+        
+        <div className="input-section">
+          <form className="input-wrapper" onSubmit={sendMessage}>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Haz una pregunta de matemáticas..."
+              disabled={isLoading}
+            />
+            <button type="submit" className="send-btn" disabled={isLoading || input.trim() === ''}>
+              {isLoading ? '...' : '→'}
+            </button>
+          </form>
+          <p className="input-footer">MathSolver AI puede cometer errores. Verifica la información importante.</p>
+        </div>
+      </main>
     </div>
   );
 };

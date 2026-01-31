@@ -62,14 +62,14 @@ async function obtenerRespuesta(pregunta, modo = 'detallado') {
         let instruccionModo = "";
         switch (modo) {
             case 'rápido':
-                instruccionModo = "[MODO RÁPIDO: Responde ÚNICAMENTE con la solución final. Sin pasos, sin explicaciones, de la forma más directa posible (ej: '$x = 5$').] ";
+                instruccionModo = "[MODO RÁPIDO: Si es un cálculo o problema, da solo el resultado final de forma directa. Si es una pregunta de concepto o ejemplo, responde de forma muy breve y concisa, sin rodeos.] ";
                 break;
             case 'quiz':
-                instruccionModo = "[MODO QUIZ: Estás en modo tutor interactivo. NO des la solución. Identifica el primer paso, explica el concepto brevemente y haz una pregunta específica al usuario para que él mismo avance en la resolución. Mantén al usuario comprometido.] ";
+                instruccionModo = "[MODO QUIZ: NO des la solución. Actúa como un tutor: identifica el primer paso, explica el concepto y haz una pregunta para que el usuario resuelva. Si el usuario pide un ejemplo, da uno sencillo para ilustrar el concepto antes de preguntar.] ";
                 break;
             case 'detallado':
             default:
-                instruccionModo = "[MODO DETALLADO: Proporciona una explicación paso a paso, clara y exhaustiva. Incluye definiciones, teoremas o reglas aplicadas (ej: Regla de la cadena, Teorema de Pitágoras) para que el razonamiento sea impecable.] ";
+                instruccionModo = "[MODO DETALLADO: Proporciona una explicación paso a paso, clara y exhaustiva. Incluye definiciones, teoremas y reglas aplicadas.] ";
                 break;
         }
 
