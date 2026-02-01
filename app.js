@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import express from "express";
 import cors from "cors";
+import multer from "multer";
+import fs from "fs";
 
 dotenv.config();
 
@@ -55,8 +57,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Configura multer para almacenar archivos temporalmente en memoria
+const upload = multer({ storage: multer.memoryStorage() });
+
 // Función para obtener la respuesta a una pregunta dada utilizando Google Gemini
-async function obtenerRespuesta(pregunta, modo = 'detallado') {
+async function obtenerRespuesta(pregunta, modo = 'detallado', imageData = null) {
     try {
         // Instrucciones específicas según el modo
         let instruccionModo = "";
@@ -73,7 +78,20 @@ async function obtenerRespuesta(pregunta, modo = 'detallado') {
                 break;
         }
 
-        const result = await chatSession.sendMessage(instruccionModo + pregunta);
+        // Construir partes del mensaje para Gemini
+        const messageParts = [{ text: instruccionModo + pregunta }];
+        
+        // Si hay imagen, agregarla al mensaje
+        if (imageData) {
+            messageParts.push({
+                inlineData: {
+                    mimeType: imageData.mimeType,
+                    data: imageData.data
+                }
+            });
+        }
+        
+        const result = await chatSession.sendMessage(messageParts);
         const response = await result.response;
         return response.text();
     } catch (error) {
@@ -87,6 +105,27 @@ app.post('/api/chat', async (req, res) => {
     try {
         const { message, mode } = req.body;
         const respuesta = await obtenerRespuesta(message, mode);
+        res.json(respuesta);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Ruta para manejar las solicitudes de chat con archivo
+app.post('/api/chat-with-file', upload.single('file'), async (req, res) => {
+    try {
+        const { message, mode } = req.body;
+        let imageData = null;
+        
+        // Si hay archivo adjunto, procesarlo
+        if (req.file) {
+            imageData = {
+                mimeType: req.file.mimetype,
+                data: req.file.buffer.toString('base64')
+            };
+        }
+        
+        const respuesta = await obtenerRespuesta(message, mode, imageData);
         res.json(respuesta);
     } catch (error) {
         res.status(500).json({ error: error.message });

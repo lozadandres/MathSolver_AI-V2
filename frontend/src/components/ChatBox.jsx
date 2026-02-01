@@ -10,7 +10,10 @@ const ChatBox = () => {
   const [input, setInput] = useState('');
   const [mode, setMode] = useState('detallado');
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // Función para desplazarse al último mensaje
   const scrollToBottom = () => {
@@ -21,26 +24,79 @@ const ChatBox = () => {
     scrollToBottom();
   }, [messages]);
 
+  // Función para manejar la selección de archivo
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      // Crear preview si es imagen
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => setPreviewUrl(e.target.result);
+        reader.readAsDataURL(file);
+      } else {
+        setPreviewUrl(null);
+      }
+    }
+  };
+
+  // Función para cancelar archivo seleccionado
+  const handleCancelFile = () => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   // Función para enviar mensaje al backend
   const sendMessage = async (e) => {
     e.preventDefault();
-    if (input.trim() === '') return;
+    if (input.trim() === '' && !selectedFile) return;
 
     // Agregar mensaje del usuario al chat
-    const userMessage = { type: 'user', content: input };
+    const userMessage = { 
+      type: 'user', 
+      content: input || '(Archivo adjunto)',
+      file: selectedFile ? { name: selectedFile.name, preview: previewUrl } : null
+    };
     setMessages([...messages, userMessage]);
+    
+    const messageText = input;
+    const fileToSend = selectedFile;
+    
     setInput('');
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
     setIsLoading(true);
 
     try {
-      // Enviar solicitud al backend
-      const response = await fetch('http://localhost:3000/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: input, mode: mode }),
-      });
+      let response;
+      
+      // Si hay archivo, usar FormData
+      if (fileToSend) {
+        const formData = new FormData();
+        formData.append('message', messageText);
+        formData.append('mode', mode);
+        formData.append('file', fileToSend);
+        
+        response = await fetch('http://localhost:3000/api/chat-with-file', {
+          method: 'POST',
+          body: formData,
+        });
+      } else {
+        // Sin archivo, usar JSON
+        response = await fetch('http://localhost:3000/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ message: messageText, mode: mode }),
+        });
+      }
 
       if (!response.ok) {
         throw new Error('Error en la comunicación con el servidor');
@@ -174,7 +230,37 @@ const ChatBox = () => {
         </div>
         
         <div className="input-section">
+          {selectedFile && (
+            <div className="file-preview-container">
+              <div className="file-preview">
+                {previewUrl ? (
+                  <img src={previewUrl} alt="Preview" className="preview-image" />
+                ) : (
+                  <div className="file-icon">📄</div>
+                )}
+                <span className="file-name">{selectedFile.name}</span>
+                <button type="button" className="remove-file-btn" onClick={handleCancelFile}>
+                  ✕
+                </button>
+              </div>
+            </div>
+          )}
           <form className="input-wrapper" onSubmit={sendMessage}>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,.pdf,.doc,.docx"
+              onChange={handleFileSelect}
+              style={{ display: 'none' }}
+            />
+            <button 
+              type="button" 
+              className="attach-btn"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isLoading}
+            >
+              📎
+            </button>
             <input
               type="text"
               value={input}
@@ -182,7 +268,7 @@ const ChatBox = () => {
               placeholder="Haz una pregunta de matemáticas..."
               disabled={isLoading}
             />
-            <button type="submit" className="send-btn" disabled={isLoading || input.trim() === ''}>
+            <button type="submit" className="send-btn" disabled={isLoading || (input.trim() === '' && !selectedFile)}>
               {isLoading ? '...' : '→'}
             </button>
           </form>
