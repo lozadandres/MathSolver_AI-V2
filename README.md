@@ -13,6 +13,17 @@ MathSolver AI no es solo un chat; es una herramienta diseñada para transformar 
 ### Estado de Carga
 ![Vista de Carga](./frontend/public/vistacarga.png)
 
+## 📸 Nueva Funcionalidad: OCR y Análisis de Imágenes
+
+### Vista de Inicio OCR
+![Vista de Inicio con OCR](./frontend/public/vistainicioOCR.png)
+
+### Respuesta desde Imagen
+![Vista de Respuesta OCR](./frontend/public/VistarespuestaOCR.png)
+
+### Estado de Carga OCR
+![Vista de Carga OCR](./frontend/public/vistacargaOCR.png)
+
 ---
 
 ## 🚀 Flujo de Usuario y Lógica
