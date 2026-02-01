@@ -95,6 +95,34 @@ Dependiendo del modo seleccionado, el backend inyecta una instrucción específi
 
 ---
 
+## 📸 OCR y Análisis Multimodal
+
+Una de las características más poderosas de MathSolver AI es su capacidad para **analizar imágenes** de problemas matemáticos, ya sea escritos a mano o impresos en libros, cuadernos o pizarras.
+
+### Implementación Técnica
+
+* **Multer para Subida de Archivos:** Implementé `multer` en el backend para manejar archivos de forma segura. Los archivos se almacenan en memoria (no en disco), se convierten a base64 y se envían directamente a Gemini.
+* **Gemini Multimodal:** Utilizo las capacidades nativas de visión de Gemini 1.5 Flash. No necesité bibliotecas externas de OCR como Tesseract, ya que Gemini procesa directamente las imágenes y extrae tanto texto como expresiones matemáticas.
+* **Endpoint Dedicado:** Creé `/api/chat-with-file` que acepta `FormData` con el archivo adjunto y el modo de respuesta seleccionado.
+
+### ¿Por qué Gemini en lugar de OCR tradicional?
+
+Las soluciones tradicionales de OCR (como Tesseract) funcionan bien con texto plano, pero **fallan con notación matemática compleja** (fracciones, integrales, matrices). Gemini, al ser un modelo multimodal:
+
+* Reconoce símbolos matemáticos con alta precisión.
+* Comprende el **contexto** del problema (no solo transcribe, sino que entiende qué se está preguntando).
+* Preserva la estructura de las ecuaciones para poder responder según el modo elegido (Rápido/Detallado/Quiz).
+
+### Flujo de Análisis de Imágenes
+
+1. Usuario adjunta una imagen usando el botón 📎.
+2. El frontend genera un preview y la envía como `FormData`.
+3. El backend convierte la imagen a base64.
+4. Gemini recibe un mensaje con dos partes: texto (instrucción de modo) e imagen (datos inline).
+5. La IA analiza la imagen, identifica el problema y responde según el modo seleccionado.
+
+---
+
 ## 🧠 Decisiones y Arquitectura: "El Porqué de las Cosas"
 
 ### ¿Por qué tres modos de respuesta?
