@@ -40,8 +40,14 @@
   gap: 30px;
   overflow-y: auto;
   height: 0; /* Allow flexbox to control height for overflow */
-  scrollbar-width: thin;
-  scrollbar-color: #334155 transparent;
+}
+
+/* Firefox and modern browsers (Chrome 121+) */
+@supports (scrollbar-width: thin) {
+  .sidebar-content {
+    scrollbar-width: thin;
+    scrollbar-color: #334155 transparent;
+  }
 }
 
 .sidebar-content::-webkit-scrollbar {
@@ -240,10 +246,14 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  
-  /* Support for Firefox and modern browsers (Chrome 121+) */
-  scrollbar-width: thin;
-  scrollbar-color: #334155 transparent;
+}
+
+/* Support for Firefox and modern browsers (Chrome 121+) */
+@supports (scrollbar-width: thin) {
+  .messages-container {
+    scrollbar-width: thin;
+    scrollbar-color: #334155 transparent;
+  }
 }
 
 /* Support for Webkit browsers (Safari, older Chrome) */
@@ -325,8 +335,14 @@
   font-size: 0.9rem;
   overflow-x: auto;
   display: block;
-  scrollbar-width: thin;
-  scrollbar-color: #334155 transparent;
+}
+
+/* Support for Firefox and modern browsers (Chrome 121+) */
+@supports (scrollbar-width: thin) {
+  .message-bubble table {
+    scrollbar-width: thin;
+    scrollbar-color: #334155 transparent;
+  }
 }
 
 .message-bubble table::-webkit-scrollbar {
