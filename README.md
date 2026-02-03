@@ -5,23 +5,29 @@ MathSolver AI no es solo un chat; es una herramienta diseñada para transformar 
 ## ✨ Nueva Interfaz Moderna (v2)
 
 ### Vista de Inicio
+
 ![Vista de Inicio](./frontend/public/vistainicio.png)
 
 ### Respuesta Detallada
+
 ![Vista Detallada](./frontend/public/Vistadetallada.png)
 
 ### Estado de Carga
+
 ![Vista de Carga](./frontend/public/vistacarga.png)
 
 ## 📸 Nueva Funcionalidad: OCR y Análisis de Imágenes
 
 ### Vista de Inicio OCR
+
 ![Vista de Inicio con OCR](./frontend/public/vistainicioOCR.png)
 
 ### Respuesta desde Imagen
+
 ![Vista de Respuesta OCR](./frontend/public/VistarespuestaOCR.png)
 
 ### Estado de Carga OCR
+
 ![Vista de Carga OCR](./frontend/public/vistacargaOCR.png)
 
 ## 🌐 Soporte Multi-idioma (Español / Inglés)
@@ -29,9 +35,11 @@ MathSolver AI no es solo un chat; es una herramienta diseñada para transformar 
 He añadido un sistema de localización que permite cambiar la experiencia de usuario entre español e inglés con un solo clic.
 
 ### Selector de Idioma
+
 ![Vista Multi-idioma](./frontend/public/vistamultiidioma.png)
 
 ### Respuesta en Inglés
+
 ![Respuesta Multi-idioma](./frontend/public/respuestamultiidioma.png)
 
 ---
@@ -40,10 +48,8 @@ He añadido un sistema de localización que permite cambiar la experiencia de us
 
 Para una mejor organización de la información, el sistema ahora soporta tablas profesionales y formateo avanzado.
 
-*   **Renderizado de Tablas:** Utilizo `remark-gfm` para que las comparaciones y clasificaciones se muestren en tablas limpias y legibles.
-*   **Estilo Premium:** Las tablas están adaptadas al tema oscuro con bordes sutiles y resaltado de encabezados.
-
----
+- **Renderizado de Tablas:** Utilizo `remark-gfm` para que las comparaciones y clasificaciones se muestren en tablas limpias y legibles.
+- **Estilo Premium:** Las tablas están adaptadas al tema oscuro con bordes sutiles y resaltado de encabezados.
 
 ---
 
@@ -101,19 +107,19 @@ El corazón de la inteligencia de MathSolver AI reside en cómo nos comunicamos 
 
 He definido un "System Prompt" robusto que actúa como la constitución del asistente. Establece:
 
-* **Rol:** "Tutor Pedagógico Experto en Matemáticas".
-* **Proceso de Pensamiento:** Antes de responder, el modelo debe internamente categorizar el problema, detectar el nivel del usuario y diseñar una estrategia de enseñanza (analogía + ejemplo).
-* **Reglas Estrictas:** Solo responder sobre matemáticas. Si el usuario pregunta algo fuera de este dominio, el asistente declina educadamente con un mensaje predefinido.
-* **Formateo Literario:** Obligatoriedad de usar delimitadores LaTeX `$ ... $` y `$$ ... $$` para que el frontend pueda renderizarlos.
-* **Herramientas Pedagógicas:** Uso obligatorio de analogías y ejemplos de la vida real en explicaciones detalladas.
+- **Rol:** "Tutor Pedagógico Experto en Matemáticas".
+- **Proceso de Pensamiento:** Antes de responder, el modelo debe internamente categorizar el problema, detectar el nivel del usuario y diseñar una estrategia de enseñanza (analogía + ejemplo).
+- **Reglas Estrictas:** Solo responder sobre matemáticas. Si el usuario pregunta algo fuera de este dominio, el asistente declina educadamente con un mensaje predefinido.
+- **Formateo Literario:** Obligatoriedad de usar delimitadores LaTeX `$ ... $` y `$$ ... $$` para que el frontend pueda renderizarlos.
+- **Herramientas Pedagógicas:** Uso obligatorio de analogías y ejemplos de la vida real en explicaciones detalladas.
 
 ### 2. Instrucciones Dinámicas (Few-Shot & Role-Play)
 
 Dependiendo del modo seleccionado, el backend inyecta una instrucción específica al principio de la consulta:
 
-* **Modo Rápido:** *Constraint Prompting* para forzar una respuesta mínima y directa.
-* **Modo Detallado:** *Mini-Lesson Prompting*, pidiendo el paso a paso reforzado con **analogías** y **ejemplos prácticos**.
-* **Modo Quiz:** *Socratic Prompting*, prohibiendo dar la respuesta y obligando al modelo a guiar al usuario con preguntas estratégicas.
+- **Modo Rápido:** *Constraint Prompting* para forzar una respuesta mínima y directa.
+- **Modo Detallado:** *Mini-Lesson Prompting*, pidiendo el paso a paso reforzado con **analogías** y **ejemplos prácticos**.
+- **Modo Quiz:** *Socratic Prompting*, prohibiendo dar la respuesta y obligando al modelo a guiar al usuario con preguntas estratégicas.
 
 ---
 
@@ -121,9 +127,9 @@ Dependiendo del modo seleccionado, el backend inyecta una instrucción específi
 
 No solo resolvemos problemas; enseñamos a entenderlos. MathSolver AI integra tres capas de aprendizaje en cada explicación detallada:
 
-1.  **Secuencia Lógica:** Pasos matemáticos claros y rigurosos.
-2.  **Analogías Cotidianas:** Comparamos conceptos abstractos con situaciones conocidas. (Ej: Las ecuaciones son como balanzas o repartos de objetos).
-3.  **Ejemplos del Mundo Real:** Aplicaciones prácticas para responder al "¿Para qué sirve esto?". (Ej: Cálculo de intereses, física de proyectiles, precios de entradas).
+1. **Secuencia Lógica:** Pasos matemáticos claros y rigurosos.
+2. **Analogías Cotidianas:** Comparamos conceptos abstractos con situaciones conocidas. (Ej: Las ecuaciones son como balanzas o repartos de objetos).
+3. **Ejemplos del Mundo Real:** Aplicaciones prácticas para responder al "¿Para qué sirve esto?". (Ej: Cálculo de intereses, física de proyectiles, precios de entradas).
 
 Esto transforma la plataforma en un **tutor virtual** que adapta la complejidad de sus ejemplos al tema tratado.
 
@@ -135,17 +141,17 @@ Una de las características más poderosas de MathSolver AI es su capacidad para
 
 ### Implementación Técnica
 
-* **Multer para Subida de Archivos:** Implementé `multer` en el backend para manejar archivos de forma segura. Los archivos se almacenan en memoria (no en disco), se convierten a base64 y se envían directamente a Gemini.
-* **Gemini Multimodal:** Utilizo las capacidades nativas de visión de Gemini 1.5 Flash. No necesité bibliotecas externas de OCR como Tesseract, ya que Gemini procesa directamente las imágenes y extrae tanto texto como expresiones matemáticas.
-* **Endpoint Dedicado:** Creé `/api/chat-with-file` que acepta `FormData` con el archivo adjunto y el modo de respuesta seleccionado.
+- **Multer para Subida de Archivos:** Implementé `multer` en el backend para manejar archivos de forma segura. Los archivos se almacenan en memoria (no en disco), se convierten a base64 y se envían directamente a Gemini.
+- **Gemini Multimodal:** Utilizo las capacidades nativas de visión de Gemini 1.5 Flash. No necesité bibliotecas externas de OCR como Tesseract, ya que Gemini procesa directamente las imágenes y extrae tanto texto como expresiones matemáticas.
+- **Endpoint Dedicado:** Creé `/api/chat-with-file` que acepta `FormData` con el archivo adjunto y el modo de respuesta seleccionado.
 
 ### ¿Por qué Gemini en lugar de OCR tradicional?
 
 Las soluciones tradicionales de OCR (como Tesseract) funcionan bien con texto plano, pero **fallan con notación matemática compleja** (fracciones, integrales, matrices). Gemini, al ser un modelo multimodal:
 
-* Reconoce símbolos matemáticos con alta precisión.
-* Comprende el **contexto** del problema (no solo transcribe, sino que entiende qué se está preguntando).
-* Preserva la estructura de las ecuaciones para poder responder según el modo elegido (Rápido/Detallado/Quiz).
+- Reconoce símbolos matemáticos con alta precisión.
+- Comprende el **contexto** del problema (no solo transcribe, sino que entiende qué se está preguntando).
+- Preserva la estructura de las ecuaciones para poder responder según el modo elegido (Rápido/Detallado/Quiz).
 
 ### Flujo de Análisis de Imágenes
 
@@ -169,9 +175,9 @@ Nada me frustra más que ver fórmulas en texto plano como `x^2/sqrt(y)`. Querí
 
 ### Decisiones Técnicas
 
-* Vite: Para un desarrollo instantáneo y una build ligera.
-* Express: Para tener un puente seguro y escalable hacia la API de Google Gemini.
-* Google Gemini (Flash): Por su increíble balance entre velocidad y razonamiento lógico-matemático.
+- **Vite:** Para un desarrollo instantáneo y una build ligera.
+- **Express:** Para tener un puente seguro y escalable hacia la API de Google Gemini.
+- **Google Gemini (Flash):** Por su increíble balance entre velocidad y razonamiento lógico-matemático.
 
 ---
 
@@ -191,9 +197,9 @@ No me enfoqué solo en "features", sino en **valor**.
 
 Si tuviera que reconstruir MathSolver AI desde cero, cambiaría un par de cosas:
 
-* **Base de Datos:** Implementaría un historial de chats (MongoDB o similar) para no perder mis sesiones al refrescar.
-* **Autenticación:** Añadiría un sistema de usuarios desde el día uno para personalizar aún más la experiencia de aprendizaje.
-* **Subida de Imágenes:** Integraría visión artificial para poder enviarle una foto de mi cuaderno en lugar de escribir la ecuación.
+- **Base de Datos:** Implementaría un historial de chats (MongoDB o similar) para no perder mis sesiones al refrescar.
+- **Autenticación:** Añadiría un sistema de usuarios desde el día uno para personalizar aún más la experiencia de aprendizaje.
+- **Subida de Imágenes:** Integraría visión artificial para poder enviarle una foto de mi cuaderno en lugar de escribir la ecuación.
 
 ---
 
@@ -207,11 +213,11 @@ Cuando programé el backend, mi reto fue hacer que el `SYSTEM_PROMPT` fuera lo s
 
 1. Clonar: `git clone https://github.com/lozadandres/MathSolver_AI.git`
 2. Backend:
-    * `npm install`
-    * Crear `.env` con `OPENAI_API_KEY` (usamos Gemini, pero la variable mantiene el nombre por compatibilidad).
-    * `node app.js`
+    - `npm install`
+    - Crear `.env` con `OPENAI_API_KEY` (usamos Gemini, pero la variable mantiene el nombre por compatibilidad).
+    - `node app.js`
 3. Frontend:
-    * `cd frontend && npm install && npm run dev`
+    - `cd frontend && npm install && npm run dev`
 
 ---
 
