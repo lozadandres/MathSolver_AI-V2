@@ -101,18 +101,31 @@ El corazón de la inteligencia de MathSolver AI reside en cómo nos comunicamos 
 
 He definido un "System Prompt" robusto que actúa como la constitución del asistente. Establece:
 
-* **Rol:** "Tutor Experto en Matemáticas".
-* **Proceso de Pensamiento:** Antes de responder, el modelo debe internamente categorizar el problema y detectar el nivel del usuario.
+* **Rol:** "Tutor Pedagógico Experto en Matemáticas".
+* **Proceso de Pensamiento:** Antes de responder, el modelo debe internamente categorizar el problema, detectar el nivel del usuario y diseñar una estrategia de enseñanza (analogía + ejemplo).
 * **Reglas Estrictas:** Solo responder sobre matemáticas. Si el usuario pregunta algo fuera de este dominio, el asistente declina educadamente con un mensaje predefinido.
 * **Formateo Literario:** Obligatoriedad de usar delimitadores LaTeX `$ ... $` y `$$ ... $$` para que el frontend pueda renderizarlos.
+* **Herramientas Pedagógicas:** Uso obligatorio de analogías y ejemplos de la vida real en explicaciones detalladas.
 
 ### 2. Instrucciones Dinámicas (Few-Shot & Role-Play)
 
 Dependiendo del modo seleccionado, el backend inyecta una instrucción específica al principio de la consulta:
 
 * **Modo Rápido:** *Constraint Prompting* para forzar una respuesta mínima y directa.
-* **Modo Detallado:** *Chain-of-Thought (CoT)* inducido, pidiendo explícitamente el paso a paso y la mención de teoremas.
+* **Modo Detallado:** *Mini-Lesson Prompting*, pidiendo el paso a paso reforzado con **analogías** y **ejemplos prácticos**.
 * **Modo Quiz:** *Socratic Prompting*, prohibiendo dar la respuesta y obligando al modelo a guiar al usuario con preguntas estratégicas.
+
+---
+
+## 🎓 Enfoque Pedagógico (Tutor Adaptativo)
+
+No solo resolvemos problemas; enseñamos a entenderlos. MathSolver AI integra tres capas de aprendizaje en cada explicación detallada:
+
+1.  **Secuencia Lógica:** Pasos matemáticos claros y rigurosos.
+2.  **Analogías Cotidianas:** Comparamos conceptos abstractos con situaciones conocidas. (Ej: Las ecuaciones son como balanzas o repartos de objetos).
+3.  **Ejemplos del Mundo Real:** Aplicaciones prácticas para responder al "¿Para qué sirve esto?". (Ej: Cálculo de intereses, física de proyectiles, precios de entradas).
+
+Esto transforma la plataforma en un **tutor virtual** que adapta la complejidad de sus ejemplos al tema tratado.
 
 ---
 
