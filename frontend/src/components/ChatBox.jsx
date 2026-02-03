@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import remarkGfm from 'remark-gfm';
 import 'katex/dist/katex.min.css';
 import '../styles/ChatBox.css';
 
@@ -9,6 +10,7 @@ const ChatBox = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [mode, setMode] = useState('detallado');
+  const [language, setLanguage] = useState('es');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -81,6 +83,7 @@ const ChatBox = () => {
         const formData = new FormData();
         formData.append('message', messageText);
         formData.append('mode', mode);
+        formData.append('lang', language);
         formData.append('file', fileToSend);
         
         response = await fetch('http://localhost:3000/api/chat-with-file', {
@@ -94,7 +97,7 @@ const ChatBox = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ message: messageText, mode: mode }),
+          body: JSON.stringify({ message: messageText, mode: mode, lang: language }),
         });
       }
 
@@ -151,11 +154,28 @@ const ChatBox = () => {
                 📚 Detallado
               </button>
               <button 
-                type="button" 
-                className={mode === 'quiz' ? 'active' : ''} 
+                className={`mode-btn ${mode === 'quiz' ? 'active' : ''}`} 
                 onClick={() => setMode('quiz')}
               >
-                🧠 Quiz
+                <span className="mode-icon">🧠</span> Quiz
+              </button>
+            </div>
+          </div>
+
+          <div className="sidebar-section">
+            <h3 className="sidebar-title">IDIOMA / LANGUAGE</h3>
+            <div className="lang-selector">
+              <button 
+                className={`lang-btn ${language === 'es' ? 'active' : ''}`} 
+                onClick={() => setLanguage('es')}
+              >
+                🇪🇸 ES
+              </button>
+              <button 
+                className={`lang-btn ${language === 'en' ? 'active' : ''}`} 
+                onClick={() => setLanguage('en')}
+              >
+                🇺🇸 EN
               </button>
             </div>
           </div>
@@ -204,7 +224,7 @@ const ChatBox = () => {
                   </div>
                   <div className="message-bubble">
                     <ReactMarkdown 
-                      remarkPlugins={[remarkMath]} 
+                      remarkPlugins={[remarkMath, remarkGfm]} 
                       rehypePlugins={[rehypeKatex]}
                     >
                       {msg.content}

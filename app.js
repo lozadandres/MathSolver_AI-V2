@@ -61,22 +61,26 @@ app.use(express.json());
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Función para obtener la respuesta a una pregunta dada utilizando Google Gemini
-async function obtenerRespuesta(pregunta, modo = 'detallado', imageData = null) {
+async function obtenerRespuesta(pregunta, modo = 'detallado', imageData = null, lang = 'es') {
     try {
-        // Instrucciones específicas según el modo
+        // Instrucciones específicas según el modo e idioma
         let instruccionModo = "";
-        switch (modo) {
-            case 'rápido':
-                instruccionModo = "[MODO RÁPIDO: Si es un cálculo o problema, da solo el resultado final de forma directa. Si es una pregunta de concepto o ejemplo, responde de forma muy breve y concisa, sin rodeos.] ";
-                break;
-            case 'quiz':
-                instruccionModo = "[MODO QUIZ: NO des la solución. Actúa como un tutor: identifica el primer paso, explica el concepto y haz una pregunta para que el usuario resuelva. Si el usuario pide un ejemplo, da uno sencillo para ilustrar el concepto antes de preguntar.] ";
-                break;
-            case 'detallado':
-            default:
-                instruccionModo = "[MODO DETALLADO: Proporciona una explicación paso a paso, clara y exhaustiva. Incluye definiciones, teoremas y reglas aplicadas.] ";
-                break;
-        }
+        
+        const prompts = {
+            es: {
+                rápido: "[MODO RÁPIDO: Si es un cálculo o problema, da solo el resultado final de forma directa. Si es una pregunta de concepto o ejemplo, responde de forma muy breve y concisa, sin rodeos. RESPONDE SIEMPRE EN ESPAÑOL.] ",
+                quiz: "[MODO QUIZ: NO des la solución. Actúa como un tutor: identifica el primer paso, explica el concepto y haz una pregunta para que el usuario resuelva. Si el usuario pide un ejemplo, da uno sencillo para ilustrar el concepto antes de preguntar. RESPONDE SIEMPRE EN ESPAÑOL.] ",
+                detallado: "[MODO DETALLADO: Proporciona una explicación paso a paso, clara y exhaustiva. Incluye definiciones, teoremas y reglas aplicadas. RESPONDE SIEMPRE EN ESPAÑOL.] "
+            },
+            en: {
+                rápido: "[QUICK MODE: If it's a calculation or problem, give only the final result directly. If it's a concept or example question, respond very briefly and concisely. ALWAYS RESPOND IN ENGLISH.] ",
+                quiz: "[QUIZ MODE: DO NOT give the solution. Act as a tutor: identify the first step, explain the concept, and ask a question for the user to solve. If the user asks for an example, give a simple one to illustrate the concept before asking. ALWAYS RESPOND IN ENGLISH.] ",
+                detallado: "[DETAILED MODE: Provide a step-by-step, clear, and comprehensive explanation. Include definitions, theorems, and rules applied. ALWAYS RESPOND IN ENGLISH.] "
+            }
+        };
+
+        const currentLang = prompts[lang] || prompts.es;
+        instruccionModo = currentLang[modo] || currentLang.detallado;
 
         // Construir partes del mensaje para Gemini
         const messageParts = [{ text: instruccionModo + pregunta }];
@@ -103,8 +107,8 @@ async function obtenerRespuesta(pregunta, modo = 'detallado', imageData = null) 
 // Ruta para manejar las solicitudes de chat
 app.post('/api/chat', async (req, res) => {
     try {
-        const { message, mode } = req.body;
-        const respuesta = await obtenerRespuesta(message, mode);
+        const { message, mode, lang } = req.body;
+        const respuesta = await obtenerRespuesta(message, mode, null, lang);
         res.json(respuesta);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -114,7 +118,7 @@ app.post('/api/chat', async (req, res) => {
 // Ruta para manejar las solicitudes de chat con archivo
 app.post('/api/chat-with-file', upload.single('file'), async (req, res) => {
     try {
-        const { message, mode } = req.body;
+        const { message, mode, lang } = req.body;
         let imageData = null;
         
         // Si hay archivo adjunto, procesarlo
@@ -125,7 +129,7 @@ app.post('/api/chat-with-file', upload.single('file'), async (req, res) => {
             };
         }
         
-        const respuesta = await obtenerRespuesta(message, mode, imageData);
+        const respuesta = await obtenerRespuesta(message, mode, imageData, lang);
         res.json(respuesta);
     } catch (error) {
         res.status(500).json({ error: error.message });

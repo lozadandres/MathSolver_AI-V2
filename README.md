@@ -24,6 +24,27 @@ MathSolver AI no es solo un chat; es una herramienta diseñada para transformar 
 ### Estado de Carga OCR
 ![Vista de Carga OCR](./frontend/public/vistacargaOCR.png)
 
+## 🌐 Soporte Multi-idioma (Español / Inglés)
+
+He añadido un sistema de localización que permite cambiar la experiencia de usuario entre español e inglés con un solo clic.
+
+### Selector de Idioma
+![Vista Multi-idioma](./frontend/public/vistamultiidioma.png)
+
+### Respuesta en Inglés
+![Respuesta Multi-idioma](./frontend/public/respuestamultiidioma.png)
+
+---
+
+## 📊 Tablas y Formateo GFM (GitHub Flavored Markdown)
+
+Para una mejor organización de la información, el sistema ahora soporta tablas profesionales y formateo avanzado.
+
+*   **Renderizado de Tablas:** Utilizo `remark-gfm` para que las comparaciones y clasificaciones se muestren en tablas limpias y legibles.
+*   **Estilo Premium:** Las tablas están adaptadas al tema oscuro con bordes sutiles y resaltado de encabezados.
+
+---
+
 ---
 
 ## 🚀 Flujo de Usuario y Lógica
